@@ -4,7 +4,7 @@ import axios from "axios";
 
 export async function sendRegisterRequest(userData) {
     try {
-        let { data } = await axios.post('https://linked-posts.routemisr.com/users/signup', userData);
+        let { data } = await axios.post('/api/users/signup', userData);
 
         console.log(data);
         return data
@@ -17,7 +17,7 @@ export async function sendRegisterRequest(userData) {
 
 export async function sendLoginData(userData) {
     try {
-        let { data } = await axios.post('https://linked-posts.routemisr.com/users/signin', userData);
+        let { data } = await axios.post('/api/users/signin', userData);
 
         // console.log(data);
         return data
