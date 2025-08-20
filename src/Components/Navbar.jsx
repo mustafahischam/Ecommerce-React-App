@@ -1,19 +1,21 @@
 
 import { Navbar as HeroUiNavbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { CounterContext } from "../Context/CounterContext";
 import { AuthContext } from "../Context/AuthContext";
 
+
 export default function Navbar() {
 
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, setUserData } = useContext(AuthContext);
   const navigate = useNavigate();
 
 
   function logout() {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
+    setUserData(null);
     navigate('/login');
 
   }
@@ -23,7 +25,7 @@ export default function Navbar() {
     <HeroUiNavbar>
       <NavbarBrand>
 
-        <p className="font-bold text-inherit">Linked-Posts</p>
+        <Link to="/" className="font-bold text-inherit">Linked-Posts</Link>
       </NavbarBrand>
 
       <NavbarContent justify="end">

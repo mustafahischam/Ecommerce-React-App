@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     path: '', element: <MainLayout />, children:  
       [{ index: true, element: <ProtectedRoute><FeedPage /></ProtectedRoute> }
         , { path: 'profile', element: <ProtectedRoute><ProfilePage /></ProtectedRoute> },
-      { path: 'post-details', element: <ProtectedRoute><PostDetailsPage /></ProtectedRoute> },
+      { path: 'post-details/:id', element: <ProtectedRoute><PostDetailsPage /></ProtectedRoute> },
       { path: '*', element: <NotFoundPage /> },
 
       ]
