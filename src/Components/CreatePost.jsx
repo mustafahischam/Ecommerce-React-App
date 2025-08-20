@@ -11,15 +11,12 @@ import { updateCommentApi } from "../Services/commentService";
 
 export default function CreatePost({ callBack, post, comment, isUpdating, setIsUpdating, onCreated }) {
 
-
-
     const [PostBody, setPostBody] = useState(post?.body ?? comment?.content ?? '')
     const [image, setImage] = useState(null)
     const [imageUrl, setImageUrl] = useState(post?.image ?? '')
     const [loading, setLoading] = useState(false)
 
-    console.log(post);
-
+    const isEditingComment = Boolean(isUpdating && comment)
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -32,16 +29,15 @@ export default function CreatePost({ callBack, post, comment, isUpdating, setIsU
         }
         if (isUpdating && post) {
             response = await updatePostApi(formData, post.id)
-        } else if (isUpdating && comment) {
+        } else if (isEditingComment) {
             response = await updateCommentApi(PostBody, comment._id)
         } else {
             response = await createPostApi(formData)
         }
 
-
         if (response.message) {
             if (onCreated && response.post) {
-                try { onCreated(response.post) } catch (error) { console.log(error) }
+                try { onCreated(response.post) } catch { }
             }
             await callBack()
             setPostBody('')
@@ -55,7 +51,6 @@ export default function CreatePost({ callBack, post, comment, isUpdating, setIsU
     }
 
     function handleImage(e) {
-
         setImage(e.target.files[0])
         setImageUrl(URL.createObjectURL(e.target.files[0]))
         e.target.value = null
@@ -84,18 +79,14 @@ export default function CreatePost({ callBack, post, comment, isUpdating, setIsU
                         <Input onChange={handleImage} type="file" className="hidden" title=" " label="Upload Image" color="transparent" />
                     </label>
                     {isUpdating && <Button color="default" onPress={() => setIsUpdating(false)}>Cancel</Button>}
-                    <Button isLoading={loading} color="primary" type="submit">
-                        {isUpdating && post ? 'Update Post' : isUpdating && comment ? 'Update Comment' : 'Post'}
-                    </Button>
-
+                    <div className="flex items-center gap-2">
+                        <Button color="primary" type="submit" {...(!isEditingComment ? { isLoading: loading } : {})}>
+                            {isUpdating && post ? 'Update Post' : isEditingComment ? 'Update Comment' : 'Post'}
+                        </Button>
+                        {isEditingComment && loading && <Spinner size="sm" />}
+                    </div>
                 </div>
             </form>
-            {loading && <div className="absolute inset-0 flex justify-center bg-gray-300/50 items-center">
-                <Spinner />
-            </div>}
-
-
         </div>
     </>
-
 }
