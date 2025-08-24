@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams } from 'react-router-dom'
 import { getSinglePostApi } from '../Services/postService'
 import { useState, useEffect } from 'react'
-import PostCard from '../Components/PostCard'
+import PostCard from '../Components/Card/PostCard'
 import LoadingScreen from '../Components/LoadingScreen'
 // import { createCommentApi } from '../Services/commentService'
 

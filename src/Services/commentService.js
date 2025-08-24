@@ -1,19 +1,16 @@
 import axios from 'axios'
 
-export async function createCommentApi(commentContent, postId) {
-    try {
-        const { data } = await axios.post('https://linked-posts.routemisr.com/comments', {
-            post: postId,
-            content: commentContent
-        }, {
-            headers: {
-                token: localStorage.getItem('token')
-            }
-        })
-        return data
-    } catch (error) {
-        return error.response.data
-    }
+export function createCommentApi(commentContent, postId) {
+    return axios.post('https://linked-posts.routemisr.com/comments', {
+        post: postId,
+        content: commentContent
+    }, {
+        headers: {
+            token: localStorage.getItem('token')
+        }
+    })
+
+
 }
 
 export async function deleteCommentApi(commentId) {

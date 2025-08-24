@@ -9,7 +9,7 @@ export default function PostBody({ body, image }) {
             <>
                 <img
                     src={image}
-                    className='w-full h-75 object-cover cursor-pointer hover:opacity-90 transition-opacity'
+                    className='w-full max-h-96 object-contain cursor-pointer hover:opacity-90 transition-opacity'
                     alt=""
                     onClick={onOpen}
                 />

@@ -22,7 +22,7 @@ export default function Comment({ comment, postUserId, callBack }) {
                         photo={displayPhoto}
                         name={comment.commentCreator.name}
                         date={comment.createdAt} />
-                    {(userData?._id === comment.commentCreator._id || userData._id === postUserId) &&
+                    {(userData?._id === comment.commentCreator._id || userData?._id === postUserId) &&
                         <DropDownAction
                             commentId={comment._id}
                             callBack={callBack}

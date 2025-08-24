@@ -1,20 +1,17 @@
 import axios from "axios";
 
-export async function getAllPostsApi() {
-    try {
-        const { data } = await axios.get('https://linked-posts.routemisr.com/posts', {
-            headers: {
-                token: localStorage.getItem('token')
-            },
-            params: {
-                limit: 15,
-                sort: '-createdAt'
-            }
-        })
-        return data
-    } catch (error) {
-        return error.response.data
-    }
+export function getAllPostsApi() {
+
+    return axios.get('https://linked-posts.routemisr.com/posts', {
+        headers: {
+            token: localStorage.getItem('token')
+        },
+        params: {
+            limit: 100,
+            sort: '-createdAt'
+        }
+    })
+
 }
 
 export async function getSinglePostApi(postId) {
@@ -71,7 +68,7 @@ export async function deletePostApi(postId) {
 
 export async function getUserPostsApi(userId, options = {}) {
     try {
-        const params = { limit: options.limit ?? 15 }
+        const params = { limit: options.limit ?? 100 }
         if (options.page) params.page = options.page
         const { data } = await axios.get('https://linked-posts.routemisr.com/users/' + userId + '/posts', {
             headers: {

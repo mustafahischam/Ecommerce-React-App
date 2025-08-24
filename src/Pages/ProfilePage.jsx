@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button } from '@heroui/react'
-import PostCard from '../Components/PostCard'
+import PostCard from '../Components/Card/PostCard'
 import { getUserPostsApi } from '../Services/postService'
-import { useState, useEffect, useContext, useRef } from 'react'
+import { useState, useContext, useRef } from 'react'
 import LoadingScreen from '../Components/LoadingScreen'
 import CreatePost from '../Components/CreatePost'
 import { AuthContext } from '../Context/AuthContext'
@@ -10,11 +10,10 @@ import { Card, CardBody, User as HeroUser, Modal, ModalContent, ModalHeader, Mod
 import { updateUserPhotoApi, getUserDataApi, changePasswordApi } from '../Services/authServices'
 import * as zod from 'zod'
 import { schema as registerSchema } from '../Schema/registerSchema'
+import { useQuery } from '@tanstack/react-query'
 
 export default function ProfilePage() {
 
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
   const { userData, setUserData } = useContext(AuthContext)
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef(null)
@@ -36,19 +35,17 @@ export default function ProfilePage() {
     message: 'Passwords must match'
   })
 
-  async function getUserPosts() {
-    if (!userData?._id) return
-    setLoading(true)
-    const response = await getUserPostsApi(userData._id, { limit: 100 })
-    const list = Array.isArray(response?.posts) ? response.posts : []
-    const sorted = list.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    setPosts(sorted)
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    getUserPosts()
-  }, [userData])
+  const { data: posts, isLoading, isError, error, refetch } = useQuery({
+    queryKey: ['userPosts', userData?._id],
+    queryFn: () => getUserPostsApi(userData?._id, { limit: 100 }),
+    select: (data) => {
+      const list = Array.isArray(data?.posts) ? data.posts : []
+      return list.slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    },
+    enabled: !!userData?._id,
+    retry: 0,
+    retryOnMount: false,
+  })
 
   const formattedDob = userData?.dateOfBirth ? new Date(userData.dateOfBirth).toLocaleDateString() : '—'
 
@@ -142,15 +139,23 @@ export default function ProfilePage() {
         </Card>
       )}
 
-      <CreatePost callBack={async () => { await getUserPosts() }} onCreated={(newPost) => setPosts((prev) => [newPost, ...prev])} />
+      <CreatePost callBack={refetch} onCreated={() => {
+        // Optimistic update - add new post to the beginning of the list
+        refetch()
+      }} />
 
-      {loading ? (
+      {isLoading ? (
         <LoadingScreen />
-      ) : posts.length === 0 ? (
+      ) : isError ? (
+        <div className='text-red-500'>
+          <Button onPress={refetch} className='bg-blue-500 text-white p-2 rounded-md'>Retry</Button>
+          <h1 className='text-red-500'>Error : {error?.message}</h1>
+        </div>
+      ) : posts?.length === 0 ? (
         <div className="text-center text-gray-500 py-6">No posts yet</div>
       ) : (
-        posts.map((post) => (
-          <PostCard key={post.id} post={post} commentLimit={1} callBack={getUserPosts} />
+        posts?.map((post) => (
+          <PostCard key={post.id} post={post} commentLimit={1} callBack={refetch} />
         ))
       )}
 

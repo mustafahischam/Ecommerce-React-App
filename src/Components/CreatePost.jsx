@@ -1,7 +1,6 @@
 import { Textarea } from "@heroui/input";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-// import staticImage from '../assets/blank-profile-picture-973460_1280.webp'
 import { useState } from "react";
 import { createPostApi } from "../Services/postService";
 import LoadingScreen from "./LoadingScreen";
